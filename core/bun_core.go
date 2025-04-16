@@ -19,6 +19,7 @@ func InstallBunJs() {
 }
 
 func UninstallBunJs() {
+	// remove bunjs from install and path
 	log.Info("Uninstalling bun")
 	cmd := exec.Command("sh", "-c", "bun uninstall")
 	cmd.Stdout = os.Stdout
