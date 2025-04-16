@@ -225,3 +225,7 @@ func InstallStirlingPDFContainer(basePath string) {
 	log.Println("Stirling PDF container deployed successfully!")
 }
 
+
+func  InstallPenPotContainer(basePath string) {
+	// TODO!
+}

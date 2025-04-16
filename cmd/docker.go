@@ -49,6 +49,8 @@ to quickly create a Cobra application.`,
 						core.InstallWatchtowerContainer(basepath)
 					case "yacht":
 						core.InstallYachtContainer(basepath)
+					case "penpot":
+						core.InstallPenPotContainer(basepath)
 					default:
 						fmt.Println("Please specify a valid package")
 				}
