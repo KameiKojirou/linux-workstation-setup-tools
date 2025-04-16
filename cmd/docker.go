@@ -34,6 +34,26 @@ to quickly create a Cobra application.`,
 			default:
 				fmt.Println("Please specify a valid action")
 		}
+
+		packages, _ := cmd.Flags().GetStringArray("packages")
+		basepath, _ := cmd.Flags().GetString("basepath")
+		if basepath == "" || len(packages) == 0 {
+			fmt.Println("Please specify a basepath")
+			return
+		} else {
+			for _, pkg := range packages {
+				switch pkg {
+					case "stirling-pdf":
+						core.InstallStirlingPDFContainer(basepath)
+					case "watchtower":
+						core.InstallWatchtowerContainer(basepath)
+					case "yacht":
+						core.InstallYachtContainer(basepath)
+					default:
+						fmt.Println("Please specify a valid package")
+				}
+			}
+		}
 	},
 }
 
@@ -49,4 +69,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	dockerCmd.Flags().StringP("action", "a", "", "action to perform")
+	dockerCmd.Flags().StringArrayP("packages", "p", []string{}, "list of packages to install")
+	dockerCmd.Flags().StringP("basepath", "b", "", "base path for installation")
 }

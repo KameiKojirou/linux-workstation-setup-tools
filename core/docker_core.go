@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 // InstallDocker installs Docker on Ubuntu (and Pop!_OS 22.04) following the
@@ -95,3 +96,132 @@ sudo rm -rf /var/lib/containerd
 
 	log.Println("Docker has been uninstalled successfully!")
 }
+
+
+
+func  InstallYachtContainer(basePath string) {
+	// check if basePath is empty if so throw Error
+	if basePath == "" {
+		log.Fatal("basePath cannot be empty")
+		return
+	}
+
+	log.Println("Installing Yacht container...")
+	// Step 1: Check if the "yacht" container already exists.
+	checkCmd := exec.Command("docker", "ps", "-a", "--filter", "name=^yacht$", "--format", "{{.Names}}")
+	out, err := checkCmd.Output()
+	if err != nil {
+		log.Fatalf("Error checking for existing container: %v", err)
+	}
+	if containerName := strings.TrimSpace(string(out)); containerName != "" {
+		log.Printf("Container '%s' is already installed. Skipping installation.\n", containerName)
+		return
+	}
+
+	// Step 2: Construct the docker run command with dynamic volume mappings.
+	/* docker volume create yacht
+docker run -d -p 8000:8000 -v /var/run/docker.sock:/var/run/docker.sock -v yacht:/config selfhostedpro/yacht */
+
+	command := fmt.Sprintf(`docker run -d \
+		--name yacht \
+		-p 8000:8000 \
+		-restart always \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v "%s/yacht/config:/config" \
+		selfhostedpro/yacht`, basePath)
+
+	// Step 3: Execute the docker run command.
+	cmd := exec.Command("sh", "-c", command)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("Error installing Yacht container: %v", err)
+	}
+}
+
+func InstallWatchtowerContainer(basePath string) {
+	// check if basePath is empty if so throw Error
+	if basePath == "" {
+		log.Fatal("basePath cannot be empty")
+		return
+	}
+	log.Println("Installing Watchtower container...")
+	// Step 1: Check if the "watchtower" container already exists.
+	checkCmd := exec.Command("docker", "ps", "-a", "--filter", "name=^watchtower$", "--format", "{{.Names}}")
+	out, err := checkCmd.Output()
+	if err != nil {
+		log.Fatalf("Error checking for existing container: %v", err)
+	}
+	if containerName := strings.TrimSpace(string(out)); containerName != "" {
+		log.Printf("Container '%s' is already installed. Skipping installation.\n", containerName)
+		return
+	}
+	/*
+	$ docker run --detach \
+    --name watchtower \
+    --volume /var/run/docker.sock:/var/run/docker.sock \
+    containrrr/watchtower
+	*/
+	// Step 2: Construct the docker run command with dynamic volume mappings.
+
+	command := fmt.Sprintf(`docker run -d \
+		--name watchtower \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v "%s/watchtower/config:/config" \
+		containrrr/watchtower`, basePath)
+
+	// Step 3: Execute the docker run command.
+	cmd := exec.Command("sh", "-c", command)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("Error installing Watchtower container: %v", err)
+	}
+}
+
+func InstallStirlingPDFContainer(basePath string) {
+	// check if basePath is empty if so throw Error
+	if basePath == "" {
+		log.Fatal("basePath cannot be empty")
+		return
+	}
+
+	log.Println("Installing Stirling PDF container...")
+	// Step 1: Check if the "stirling-pdf" container already exists.
+	checkCmd := exec.Command("docker", "ps", "-a", "--filter", "name=^stirling-pdf$", "--format", "{{.Names}}")
+	out, err := checkCmd.Output()
+	if err != nil {
+		log.Fatalf("Error checking for existing container: %v", err)
+	}
+	if containerName := strings.TrimSpace(string(out)); containerName != "" {
+		log.Printf("Container '%s' is already installed. Skipping installation.\n", containerName)
+		return
+	}
+
+	// Step 2: Construct the docker run command with dynamic volume mappings.
+	command := fmt.Sprintf(`docker run -d \
+		--name stirling-pdf \
+		-p 8080:8080 \
+		-v "%s/stirling-pdf/trainingData:/usr/share/tessdata" \
+		-v "%s/stirling-pdf/extraConfigs:/configs" \
+		-v "%s/stirling-pdf/customFiles:/customFiles" \
+		-v "%s/stirling-pdf/logs:/logs" \
+		-v "%s/stirling-pdf/pipeline:/pipeline" \
+		-e DOCKER_ENABLE_SECURITY=false \
+		-e LANGS=en_GB \
+		docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest`, basePath, basePath, basePath, basePath, basePath)
+
+	log.Println("Running docker command:")
+	log.Println(command)
+
+	// Step 3: Execute the docker run command.
+	cmd := exec.Command("sh", "-c", command)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		log.Fatal("Failed to run Docker container: ", err)
+	}
+
+	log.Println("Stirling PDF container deployed successfully!")
+}
+
