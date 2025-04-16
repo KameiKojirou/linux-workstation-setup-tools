@@ -43,6 +43,8 @@ to quickly create a Cobra application.`,
 					core.InstallGrowGD()
 				case "goose":
 					core.InstallGoose()
+				default:
+					fmt.Println("Please specify a valid program")
 			}
 		}
 	},
