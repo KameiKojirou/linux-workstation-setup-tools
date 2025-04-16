@@ -12,7 +12,14 @@ import (
 
 func InstallGolang() {
 	log.Println("Installing Golang")
-
+	// Step 0: Check if Golang is already installed.
+	checkCmd := exec.Command("sh", "-c", "go version")
+	checkCmd.Stdout = os.Stdout
+	checkCmd.Stderr = os.Stderr
+	if err := checkCmd.Run(); err == nil {
+		log.Println("Golang is already installed. Skipping installation...")
+		return
+	}
 	// Step 1: Get the latest Go version (e.g. "go1.20.5")
 	versionCmd := exec.Command("sh", "-c", "curl -s https://go.dev/VERSION?m=text")
 	versionOutput, err := versionCmd.Output()
@@ -94,11 +101,11 @@ func UninstallGolang() {
 	log.Println("Golang has been uninstalled and .profile cleaned up!")
 }
 
+
 func UpgradeGolang() {
 	log.Println("Checking for Golang upgrade...")
 
 	// Step 1: Check the installed version by running "go version".
-	// The output is expected to be like: "go version go1.20.5 linux/amd64"
 	versionCmd := exec.Command("sh", "-c", "go version")
 	output, err := versionCmd.Output()
 	if err != nil {
@@ -114,7 +121,7 @@ func UpgradeGolang() {
 		return
 	}
 
-	installedVersion := fields[2] // Expected to be something like "go1.20.5"
+	installedVersion := fields[2] // e.g. "go1.24.2"
 	log.Println("Currently installed Golang version:", installedVersion)
 
 	// Step 2: Get the latest version from the official Go server.
@@ -123,7 +130,9 @@ func UpgradeGolang() {
 	if err != nil {
 		log.Fatal("Error fetching latest Go version:", err)
 	}
-	latestVersion := strings.TrimSpace(string(latestOutput))
+	// Again, use only the first line in case additional data is present.
+	lines := strings.Split(string(latestOutput), "\n")
+	latestVersion := strings.TrimSpace(lines[0])
 	log.Println("Latest available Golang version:", latestVersion)
 
 	// Step 3: Compare versions and upgrade if they differ.

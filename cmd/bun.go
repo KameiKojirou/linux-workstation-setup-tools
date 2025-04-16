@@ -6,7 +6,6 @@ package cmd
 import (
 	"fmt"
 	"linux-workstation-setup-tools/core"
-
 	"github.com/spf13/cobra"
 )
 
