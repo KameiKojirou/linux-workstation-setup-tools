@@ -269,7 +269,7 @@ func InstallTinygo() {
 
 func InstallGrowGD() {
 	// go install graphics.gd/cmd/gd@master
-	cmd := exec.Command("go install graphics.gd/cmd/gd@master")
+	cmd := exec.Command("go", "install", "graphics.gd/cmd/gd@master")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -279,7 +279,7 @@ func InstallGrowGD() {
 
 func InstallCobraCli() {
 	// go install github.com/spf13/cobra-cli@latest
-	cmd := exec.Command("go install github.com/spf13/cobra-cli@latest")
+	cmd := exec.Command("go", "install", "github.com/spf13/cobra-cli@latest")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -289,7 +289,7 @@ func InstallCobraCli() {
 
 func InstallGoose() {
 	// go install github.com/pressly/goose/v3@latest
-	cmd := exec.Command("go install github.com/pressly/goose/v3@latest")
+	cmd := exec.Command("go", "install", "github.com/pressly/goose/v3/cmd/goose@latest")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
