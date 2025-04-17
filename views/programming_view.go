@@ -1,7 +1,6 @@
 package views
 
 import (
-	"fmt"
 	"os"
 	"github.com/charmbracelet/huh"
 )
@@ -12,9 +11,10 @@ func ProgrammingMenu() {
 	form := huh.NewSelect[string]().
 		Title("Programming Languages").
 		Options(
+			huh.NewOption("Bun", "bun"),
+			huh.NewOption("Deno", "deno"),
 			huh.NewOption("Go", "go"),
 			huh.NewOption("Rust", "rust"),
-			huh.NewOption("Deno", "deno"),
 			huh.NewOption("Main Menu", "main"),
 			huh.NewOption("Exit","exit"),
 		).
@@ -23,12 +23,14 @@ func ProgrammingMenu() {
 
 
 		switch value {
+			case "bun":
+				BunMenu()
 			case "go":
 				GoLangMenu()
 			case "rust":
-				fmt.Println("Rust")
+				RustMenu()
 			case "deno":
-				fmt.Println("Deno")
+				DenoMenu()
 			case "main":
 				MainMenu()
 			case "exit":

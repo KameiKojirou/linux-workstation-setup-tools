@@ -7,7 +7,7 @@ import (
 )
 
 
-func InstallBunJs() {
+func InstallBun() {
 	log.Info("Installing bun")
 	cmd := exec.Command("sh", "-c", "curl -fsSL https://bun.sh/install | bash")
 	cmd.Stdout = os.Stdout
@@ -18,7 +18,7 @@ func InstallBunJs() {
 	}
 }
 
-func UninstallBunJs() {
+func UninstallBun() {
 	// remove bunjs from install and path
 	log.Info("Uninstalling bun")
 	cmd := exec.Command("sh", "-c", "bun uninstall")
@@ -30,7 +30,7 @@ func UninstallBunJs() {
 	}
 }
 
-func UpdateBunJs() {
+func UpgradeBun() {
 	log.Info("Updating bun")
 	cmd := exec.Command("sh", "-c", "bun upgrade")
 	cmd.Stdout = os.Stdout

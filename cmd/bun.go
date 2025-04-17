@@ -27,11 +27,11 @@ to quickly create a Cobra application.`,
 		action, _ := cmd.Flags().GetString("action")
 		switch action {
 			case "install":
-				core.InstallBunJs()
+				core.InstallBun()
 			case "upgrade":
-				core.UpdateBunJs()
+				core.UpgradeBun()
 			case "uninstall":
-				core.UninstallBunJs()
+				core.UninstallBun()
 		}
 	},
 }

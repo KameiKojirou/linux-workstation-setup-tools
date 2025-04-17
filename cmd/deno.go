@@ -29,7 +29,7 @@ to quickly create a Cobra application.`,
 			case "install":
 				core.InstallDeno()
 			case "upgrade":
-				core.UpdateDeno()
+				core.UpgradeDeno()
 			case "uninstall":
 				core.UninstallDeno()
 		}

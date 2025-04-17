@@ -17,7 +17,6 @@ func MainMenu() {
 		Value(&value)
 		form.Run()
 
-
 		switch value {
 			case "programming":
 				ProgrammingMenu()

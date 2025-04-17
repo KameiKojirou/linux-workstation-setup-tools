@@ -59,7 +59,7 @@ func UninstallDeno() {
 
 
 
-func UpdateDeno() {
+func UpgradeDeno() {
 	log.Info("Updating deno")
 	cmd := exec.Command("sh", "-c", "deno upgrade")
 	cmd.Stdout = os.Stdout

@@ -4,15 +4,14 @@ import (
 	"linux-workstation-setup-tools/components"
 	"linux-workstation-setup-tools/core"
 	"os"
-
 	"github.com/charmbracelet/huh"
 )
 
 
-func GoLangMenu() {
+func DenoMenu() {
 	value := ""
 	form := huh.NewSelect[string]().
-		Title("Golang Menu").
+		Title("Deno Menu").
 		Options(
 			huh.NewOption("Install", "install"),
 			huh.NewOption("Upgrade", "upgrade"),
@@ -27,11 +26,11 @@ func GoLangMenu() {
 
 		switch value {
 			case "install":
-				core.InstallGolang()
+				core.InstallDeno()
 			case "upgrade":
-				core.UpgradeGolang()
+				core.UpgradeDeno()
 			case "remove":
-				core.UninstallGolang()
+				core.UninstallDeno()
 			case "main":
 				MainMenu()
 			case "exit":

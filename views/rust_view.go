@@ -1,18 +1,16 @@
 package views
 
 import (
-	"linux-workstation-setup-tools/components"
 	"linux-workstation-setup-tools/core"
+	"linux-workstation-setup-tools/components"
 	"os"
-
 	"github.com/charmbracelet/huh"
 )
 
-
-func GoLangMenu() {
+func RustMenu() {
 	value := ""
 	form := huh.NewSelect[string]().
-		Title("Golang Menu").
+		Title("Rust Menu").
 		Options(
 			huh.NewOption("Install", "install"),
 			huh.NewOption("Upgrade", "upgrade"),
@@ -23,15 +21,16 @@ func GoLangMenu() {
 		Value(&value)
 		form.Run()
 
+
 		components.ConfirmationCheck()
 
 		switch value {
 			case "install":
-				core.InstallGolang()
+				core.InstallRust()
 			case "upgrade":
-				core.UpgradeGolang()
+				core.UpgradeRust()
 			case "remove":
-				core.UninstallGolang()
+				core.UninstallRust()
 			case "main":
 				MainMenu()
 			case "exit":
