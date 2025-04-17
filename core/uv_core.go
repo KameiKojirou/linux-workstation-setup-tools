@@ -7,6 +7,11 @@ import (
 )
 
 func InstallUv() {
+	// check  if  astralUv is already installed
+	if _, err := exec.LookPath("uv"); err == nil {
+		log.Info("astralUv is already installed.")
+		return
+	}
 	// curl -LsSf https://astral.sh/uv/install.sh | sh
 	log.Info("Installing astralUv")
 	cmd := exec.Command("sh", "-c", "curl -LsSf https://astral.sh/uv/install.sh | sh")

@@ -220,6 +220,13 @@ func UpgradeTinygo() {
 
 
 func InstallTinygo() {
+
+	// check if  tinygo is already installed
+	if _, err := exec.LookPath("tinygo"); err == nil {
+		log.Println("Tinygo is already installed.")
+		return
+	}
+
 	log.Println("Installing Tinygo...")
 
 	// Step 1: Get the latest Tinygo release info from GitHub API.
@@ -277,6 +284,11 @@ func InstallTinygo() {
 }
 
 func InstallGrowGD() {
+	//check if  GrowGD is already installed
+	if _, err := exec.LookPath("gd"); err == nil {
+		log.Println("GrowGD is already installed.")
+		return
+	}
 	// go install graphics.gd/cmd/gd@master
 	cmd := exec.Command("go", "install", "graphics.gd/cmd/gd@master")
 	cmd.Stdout = os.Stdout
@@ -287,6 +299,11 @@ func InstallGrowGD() {
 }
 
 func InstallCobraCli() {
+	// check if  cobra-cli is already installed
+	if _, err := exec.LookPath("cobra-cli"); err == nil {
+		log.Println("cobra-cli is already installed.")
+		return
+	}
 	// go install github.com/spf13/cobra-cli@latest
 	cmd := exec.Command("go", "install", "github.com/spf13/cobra-cli@latest")
 	cmd.Stdout = os.Stdout
@@ -297,6 +314,11 @@ func InstallCobraCli() {
 }
 
 func InstallGoose() {
+	// check if  goose is already installed
+	if _, err := exec.LookPath("goose"); err == nil {
+		log.Println("goose is already installed.")
+		return
+	}
 	// go install github.com/pressly/goose/v3@latest
 	cmd := exec.Command("go", "install", "github.com/pressly/goose/v3/cmd/goose@latest")
 	cmd.Stdout = os.Stdout

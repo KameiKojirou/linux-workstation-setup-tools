@@ -8,6 +8,12 @@ import (
 
 
 func InstallDeno() {
+    // Check if Deno is already installed.
+    if _, err := exec.LookPath("deno"); err == nil {
+        log.Info("Deno is already installed.")
+        return
+    }
+
 	log.Info("Installing deno")
 	cmd := exec.Command("sh", "-c", "curl -fsSL https://deno.land/x/install/install.sh | sh")
 	cmd.Stdout = os.Stdout

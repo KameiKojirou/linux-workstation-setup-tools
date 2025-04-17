@@ -9,6 +9,11 @@ import (
 
 
 func InstallRust() {
+	// check if  rust is already installed
+	if _, err := exec.LookPath("rustc"); err == nil {
+		log.Info("rust is already installed.")
+		return
+	}
 	log.Info("Installing rust")
 	cmd := exec.Command("sh", "-c", "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh")
 	cmd.Stdout = os.Stdout

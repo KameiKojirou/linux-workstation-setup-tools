@@ -32,5 +32,4 @@ func UninstallFlatpakFirefox() {
 	if err := cmd.Run(); err != nil {
 		log.Fatal("Failed to uninstall Flatpak Firefox: ", err)
 	}
-	
 }
