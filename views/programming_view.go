@@ -11,6 +11,7 @@ func ProgrammingMenu() {
 	form := huh.NewSelect[string]().
 		Title("Programming Languages").
 		Options(
+			huh.NewOption("Android-Studio", "android-studio"),
 			huh.NewOption("Bun", "bun"),
 			huh.NewOption("Deno", "deno"),
 			huh.NewOption("Go", "go"),
@@ -25,6 +26,8 @@ func ProgrammingMenu() {
 
 
 		switch value {
+			case "android-studio":
+				AndroidStudioMenu()
 			case "bun":
 				BunMenu()
 			case "deno":

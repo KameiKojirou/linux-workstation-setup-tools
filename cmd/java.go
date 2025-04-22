@@ -1,11 +1,11 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"linux-workstation-setup-tools/core"
 
 	"github.com/spf13/cobra"
 )
@@ -21,7 +21,21 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("java called")
+		if len (args) == 0 {
+			fmt.Println("Please specify a command")
+		}
+		action, _ := cmd.Flags().GetString("action")
+		switch action {
+			case "install":
+				core.InstallJava()
+			case "upgrade":
+				core.UpgradeJava()
+			case "uninstall":
+				core.UninstallJava()
+			default:
+				fmt.Println("Please specify a valid action")
+		}
+
 	},
 }
 
@@ -36,5 +50,6 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// javaCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	javaCmd.Flags().StringP("action", "a", "", "action to perform")
+
 }
