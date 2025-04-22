@@ -14,6 +14,7 @@ func ProgrammingMenu() {
 			huh.NewOption("Bun", "bun"),
 			huh.NewOption("Deno", "deno"),
 			huh.NewOption("Go", "go"),
+			huh.NewOption("Java", "java"),
 			huh.NewOption("Rust", "rust"),
 			huh.NewOption("Main Menu", "main"),
 			huh.NewOption("Exit","exit"),
@@ -25,12 +26,14 @@ func ProgrammingMenu() {
 		switch value {
 			case "bun":
 				BunMenu()
-			case "go":
-				GoLangMenu()
-			case "rust":
-				RustMenu()
 			case "deno":
 				DenoMenu()
+			case "go":
+				GoLangMenu()
+			case "java":
+				JavaMenu()
+			case "rust":
+				RustMenu()
 			case "main":
 				MainMenu()
 			case "exit":

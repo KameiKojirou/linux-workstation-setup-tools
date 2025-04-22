@@ -29,6 +29,7 @@ func GoLangMenu() {
 		switch value {
 			case "install":
 				core.InstallGolang()
+				InstallGoLibraries()
 			case "upgrade":
 				core.UpgradeGolang()
 			case "remove":
@@ -38,6 +39,11 @@ func GoLangMenu() {
 			case "exit":
 				os.Exit(0)
 		}
+
+		GoLangMenu()
+	}
+
+func InstallGoLibraries() {
 	var multivalue []string
 	librariesform := huh.NewMultiSelect[string]().
 		Title("Golang Libraries").
