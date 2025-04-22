@@ -14,6 +14,7 @@ func ProgrammingMenu() {
 			huh.NewOption("Android-Studio", "android-studio"),
 			huh.NewOption("Bun", "bun"),
 			huh.NewOption("Deno", "deno"),
+			huh.NewOption("Dotnet", "dotnet"),
 			huh.NewOption("Go", "go"),
 			huh.NewOption("Java", "java"),
 			huh.NewOption("Rust", "rust"),
@@ -32,6 +33,8 @@ func ProgrammingMenu() {
 				BunMenu()
 			case "deno":
 				DenoMenu()
+			case "dotnet":
+				DotnetCoreMenu()
 			case "go":
 				GoLangMenu()
 			case "java":
