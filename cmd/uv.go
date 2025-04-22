@@ -28,11 +28,11 @@ to quickly create a Cobra application.`,
 		action, _ := cmd.Flags().GetString("action")
 		switch action {
 			case "install":
-				core.InstallUv()
+				core.InstallUV()
 			case "update":
-				core.UpdateUv()
+				core.UpdateUV()
 			case "uninstall":
-				core.UninstallUv()
+				core.UninstallUV()
 		}
 	},
 }

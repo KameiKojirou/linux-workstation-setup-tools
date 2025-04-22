@@ -16,6 +16,7 @@ func ProgrammingMenu() {
 			huh.NewOption("Go", "go"),
 			huh.NewOption("Java", "java"),
 			huh.NewOption("Rust", "rust"),
+			huh.NewOption("UV", "uv"),
 			huh.NewOption("Main Menu", "main"),
 			huh.NewOption("Exit","exit"),
 		).
@@ -34,6 +35,8 @@ func ProgrammingMenu() {
 				JavaMenu()
 			case "rust":
 				RustMenu()
+			case "uv":
+				UvMenu()
 			case "main":
 				MainMenu()
 			case "exit":

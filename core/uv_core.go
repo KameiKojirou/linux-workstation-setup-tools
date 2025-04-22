@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-func InstallUv() {
+func InstallUV() {
 	// check  if  astralUv is already installed
 	if _, err := exec.LookPath("uv"); err == nil {
 		log.Info("astralUv is already installed.")
@@ -23,7 +23,7 @@ func InstallUv() {
 	}
 }
 
-func UninstallUv() {
+func UninstallUV() {
 	log.Info("Uninstalling astralUv")
 	cmd := exec.Command("sh", "-c", "astral uninstall")
 	cmd.Stdout = os.Stdout
@@ -35,7 +35,7 @@ func UninstallUv() {
 }
 
 
-func UpdateUv() {
+func UpdateUV() {
 	log.Info("Updating astralUv")
 	cmd := exec.Command("uv", "self", "update")
 	cmd.Stdout = os.Stdout
