@@ -28,17 +28,8 @@ func InstallDeno() {
 func UninstallDeno() {
     log.Info("Starting Deno uninstallation process")
 
-    // Attempt to uninstall any Deno-installed scripts (if applicable)
-    // Note: `deno uninstall` typically expects a script name.
-    cmd := exec.Command("sh", "-c", "deno uninstall")
-    cmd.Stdout = os.Stdout
-    cmd.Stderr = os.Stderr
-    if err := cmd.Run(); err != nil {
-        log.Warn("deno uninstall: ", err)
-    }
-
     // Remove the Deno installation directory.
-    cmd = exec.Command("sh", "-c", "rm -rf ~/.deno")
+    cmd := exec.Command("sh", "-c", "rm -rf ~/.deno")
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
     if err := cmd.Run(); err != nil {
