@@ -1,10 +1,13 @@
 package core
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -99,7 +102,9 @@ sudo rm -rf /var/lib/containerd
 
 
 
-func  InstallYachtContainer(basePath string) {
+// InstallDocker and UninstallDocker functions remain unchanged
+
+func InstallYachtContainer(basePath string) {
 	// check if basePath is empty if so throw Error
 	if basePath == "" {
 		log.Fatal("basePath cannot be empty")
@@ -118,17 +123,20 @@ func  InstallYachtContainer(basePath string) {
 		return
 	}
 
-	// Step 2: Construct the docker run command with dynamic volume mappings.
-	/* docker volume create yacht
-docker run -d -p 8000:8000 -v /var/run/docker.sock:/var/run/docker.sock -v yacht:/config selfhostedpro/yacht */
+	// Ensure config directory exists
+	configPath := filepath.Join(basePath, "yacht", "config")
+	if err := os.MkdirAll(configPath, 0755); err != nil {
+		log.Fatalf("Error creating config directory: %v", err)
+	}
 
+	// Step 2: Construct the docker run command with proper flag formatting
 	command := fmt.Sprintf(`docker run -d \
 		--name yacht \
+		--restart always \
 		-p 8000:8000 \
-		-restart always \
 		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v "%s/yacht/config:/config" \
-		selfhostedpro/yacht`, basePath)
+		-v "%s:/config" \
+		selfhostedpro/yacht`, configPath)
 
 	// Step 3: Execute the docker run command.
 	cmd := exec.Command("sh", "-c", command)
@@ -137,6 +145,8 @@ docker run -d -p 8000:8000 -v /var/run/docker.sock:/var/run/docker.sock -v yacht
 	if err := cmd.Run(); err != nil {
 		log.Fatalf("Error installing Yacht container: %v", err)
 	}
+	
+	log.Println("Yacht container installed successfully!")
 }
 
 func InstallWatchtowerContainer(basePath string) {
@@ -146,6 +156,7 @@ func InstallWatchtowerContainer(basePath string) {
 		return
 	}
 	log.Println("Installing Watchtower container...")
+	
 	// Step 1: Check if the "watchtower" container already exists.
 	checkCmd := exec.Command("docker", "ps", "-a", "--filter", "name=^watchtower$", "--format", "{{.Names}}")
 	out, err := checkCmd.Output()
@@ -156,19 +167,35 @@ func InstallWatchtowerContainer(basePath string) {
 		log.Printf("Container '%s' is already installed. Skipping installation.\n", containerName)
 		return
 	}
-	/*
-	$ docker run --detach \
-    --name watchtower \
-    --volume /var/run/docker.sock:/var/run/docker.sock \
-    containrrr/watchtower
-	*/
-	// Step 2: Construct the docker run command with dynamic volume mappings.
 
+	// Create config directory with sudo
+	configPath := filepath.Join(basePath, "watchtower", "config")
+	mkdirCmd := exec.Command("sudo", "mkdir", "-p", configPath)
+	if err := mkdirCmd.Run(); err != nil {
+		log.Fatalf("Error creating config directory: %v", err)
+	}
+	
+	// Get current username for ownership change
+	currentUser := os.Getenv("USER")
+	if currentUser != "" {
+		chownCmd := exec.Command("sudo", "chown", "-R", 
+			fmt.Sprintf("%s:%s", currentUser, currentUser), 
+			configPath)
+		if err := chownCmd.Run(); err != nil {
+			log.Printf("Warning: Could not change directory ownership: %v", err)
+			// Continue anyway
+		}
+	}
+
+	log.Printf("Using config path: %s\n", configPath)
+
+	// Step 2: Construct the docker run command - Note: using the absolute path variable directly
 	command := fmt.Sprintf(`docker run -d \
 		--name watchtower \
+		--restart unless-stopped \
 		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v "%s/watchtower/config:/config" \
-		containrrr/watchtower`, basePath)
+		-v %s:/config \
+		containrrr/watchtower`, configPath)
 
 	// Step 3: Execute the docker run command.
 	cmd := exec.Command("sh", "-c", command)
@@ -177,7 +204,10 @@ func InstallWatchtowerContainer(basePath string) {
 	if err := cmd.Run(); err != nil {
 		log.Fatalf("Error installing Watchtower container: %v", err)
 	}
+	
+	log.Println("Watchtower container installed successfully!")
 }
+
 
 func InstallStirlingPDFContainer(basePath string) {
 	// check if basePath is empty if so throw Error
@@ -198,18 +228,35 @@ func InstallStirlingPDFContainer(basePath string) {
 		return
 	}
 
-	// Step 2: Construct the docker run command with dynamic volume mappings.
+	// Create all required directories
+	dirs := []string{
+		filepath.Join(basePath, "stirling-pdf", "trainingData"),
+		filepath.Join(basePath, "stirling-pdf", "extraConfigs"),
+		filepath.Join(basePath, "stirling-pdf", "customFiles"),
+		filepath.Join(basePath, "stirling-pdf", "logs"),
+		filepath.Join(basePath, "stirling-pdf", "pipeline"),
+	}
+
+	for _, dir := range dirs {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			log.Fatalf("Error creating directory %s: %v", dir, err)
+		}
+	}
+
+	// Step 2: Construct the docker run command with absolute paths
 	command := fmt.Sprintf(`docker run -d \
 		--name stirling-pdf \
+		--restart unless-stopped \
 		-p 8080:8080 \
-		-v "%s/stirling-pdf/trainingData:/usr/share/tessdata" \
-		-v "%s/stirling-pdf/extraConfigs:/configs" \
-		-v "%s/stirling-pdf/customFiles:/customFiles" \
-		-v "%s/stirling-pdf/logs:/logs" \
-		-v "%s/stirling-pdf/pipeline:/pipeline" \
+		-v "%s:/usr/share/tessdata" \
+		-v "%s:/configs" \
+		-v "%s:/customFiles" \
+		-v "%s:/logs" \
+		-v "%s:/pipeline" \
 		-e DOCKER_ENABLE_SECURITY=false \
 		-e LANGS=en_GB \
-		docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest`, basePath, basePath, basePath, basePath, basePath)
+		docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest`, 
+		dirs[0], dirs[1], dirs[2], dirs[3], dirs[4])
 
 	log.Println("Running docker command:")
 	log.Println(command)
@@ -225,7 +272,61 @@ func InstallStirlingPDFContainer(basePath string) {
 	log.Println("Stirling PDF container deployed successfully!")
 }
 
+func InstallHomarrContainer(basePath string) {
+	// check if basePath is empty if so throw Error
+	if basePath == "" {
+		log.Fatal("basePath cannot be empty")
+		return
+	}
+	
+	log.Println("Installing Homarr container...")
+	
+	// Step 1: Check if the "homarr" container already exists.
+	checkCmd := exec.Command("docker", "ps", "-a", "--filter", "name=^homarr$", "--format", "{{.Names}}")
+	out, err := checkCmd.Output()
+	if err != nil {
+		log.Fatalf("Error checking for existing container: %v", err)
+	}
+	if containerName := strings.TrimSpace(string(out)); containerName != "" {
+		log.Printf("Container '%s' is already installed. Skipping installation.\n", containerName)
+		return
+	}
 
-func  InstallPenPotContainer(basePath string) {
-	// TODO!
+	// Create appdata directory
+	appdataPath := filepath.Join(basePath, "homarr", "appdata")
+	if err := os.MkdirAll(appdataPath, 0755); err != nil {
+		log.Fatalf("Error creating appdata directory: %v", err)
+	}
+
+	randomBytes := make([]byte, 32) // 32 bytes = 64 hex characters
+	if _, err := rand.Read(randomBytes); err != nil {
+		log.Fatalf("Error generating random encryption key: %v", err)
+	}
+	encryptionKey := hex.EncodeToString(randomBytes)
+	os.WriteFile("./homarrencryption.key", []byte(encryptionKey), 0600)
+
+	// Step 2: Construct the docker run command with proper paths
+	command := fmt.Sprintf(`docker run -d \
+		--name homarr \
+		--restart unless-stopped \
+		-p 80:7575 \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v "%s:/appdata" \
+		-e SECRET_ENCRYPTION_KEY='%s' \
+		ghcr.io/homarr-labs/homarr:latest`, appdataPath, encryptionKey)
+
+	// Step 3: Execute the docker run command.
+	cmd := exec.Command("sh", "-c", command)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		log.Fatal("Failed to run Docker container: ", err)
+	}
+	
+	log.Println("Homarr container installed successfully!")
+}
+
+func InstallPenPotContainer(basePath string) {
+	// TODO implementation
+	log.Println("PenPot container installation not implemented yet!")
 }

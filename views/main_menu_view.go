@@ -12,6 +12,7 @@ func MainMenu() {
 		Title("Main Menu").
 		Options(
 			huh.NewOption("Programming Languages", "programming"),
+			huh.NewOption("Tools", "tools"),
 			huh.NewOption("Exit","exit"),
 		).
 		Value(&value)
@@ -20,6 +21,8 @@ func MainMenu() {
 		switch value {
 			case "programming":
 				ProgrammingMenu()
+			case "tools":
+				ToolsView()
 			default:
 				core.Exit()
 		}
