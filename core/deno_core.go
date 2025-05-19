@@ -15,10 +15,19 @@ func InstallDeno() {
     }
 
 	log.Info("Installing deno")
-	cmd := exec.Command("sh", "-c", "curl -fsSL https://deno.land/x/install/install.sh | sh")
+    cmd := exec.Command("sh", "-c", "echo '# DENO' >> ~/.profile")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+
+	cmd = exec.Command("sh", "-c", "curl -fsSL https://deno.land/x/install/install.sh | sh")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
 	if err != nil {
 		log.Fatal(err)
 	}

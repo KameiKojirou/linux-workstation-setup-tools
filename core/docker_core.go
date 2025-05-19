@@ -255,7 +255,7 @@ func InstallStirlingPDFContainer(basePath string) {
 		-v "%s:/pipeline" \
 		-e DOCKER_ENABLE_SECURITY=false \
 		-e LANGS=en_GB \
-		docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest`, 
+		docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest`,
 		dirs[0], dirs[1], dirs[2], dirs[3], dirs[4])
 
 	log.Println("Running docker command:")

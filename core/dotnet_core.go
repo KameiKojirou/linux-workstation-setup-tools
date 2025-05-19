@@ -16,8 +16,15 @@ func InstallDotnetCore() {
 	// install the latest version of dotnet core
 	/* sudo apt-get update && \
   sudo apt-get install -y dotnet-sdk-8.0 */
+	cmd := exec.Command("sh", "-c", "echo '# DOTNET' >> ~/.profile")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		log.Fatal("Failed to install dotnet core: ", err)
+	}
 
-	cmd := exec.Command("sh", "-c", "sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0")
+
+	cmd = exec.Command("sh", "-c", "sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -41,14 +48,14 @@ func InstallDotnetCore() {
 	export "PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools"
 	*/
 
-	cmd = exec.Command("sh", "-c", "echo 'export DOTNET_ROOT=$HOME/.dotnet' >> ~/.bashrc")
+	cmd = exec.Command("sh", "-c", "echo 'export DOTNET_ROOT=$HOME/.dotnet' >> ~/.profile")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		log.Fatal("Failed to add dotnet core to path: ", err)
 	}
 
-	cmd = exec.Command("sh", "-c", "echo 'export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools' >> ~/.bashrc")
+	cmd = exec.Command("sh", "-c", "echo 'export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools' >> ~/.profile")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
