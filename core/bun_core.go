@@ -8,6 +8,13 @@ import (
 
 
 func InstallBun() {
+	// check if bun is already installed
+	if _, err := exec.LookPath("bun"); err == nil {
+		log.Info("bun is already installed.")
+		return
+	}
+
+	// install bun
 	log.Info("Installing bun")
 	cmd := exec.Command("sh", "-c", "curl -fsSL https://bun.sh/install | bash")
 	cmd.Stdout = os.Stdout
