@@ -19,23 +19,52 @@ func InstallDotnetCore() {
 		return
 	}
 
-	// Install the latest version of dotnet core SDK
-	log.Info("Updating apt and installing dotnet-sdk-8.0...")
-	cmd := exec.Command("sh", "-c", "sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0")
+	// wget dotnet
+	log.Info("download .net core ./dotnet-install.sh")
+	cmd := exec.Command("wget", "https://dot.net/v1/dotnet-install.sh","-O","dotnet-install.sh")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		log.Fatal("Failed to install dotnet core SDK: ", err)
 	}
 
-	// Install the runtime of dotnet core
-	log.Info("Installing aspnetcore-runtime-8.0...")
-	cmd = exec.Command("sh", "-c", "sudo apt-get update && sudo apt-get install -y aspnetcore-runtime-8.0")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		log.Fatal("Failed to install dotnet core runtime: ", err)
-	}
+  // chmod +x ./dotnet-install.sh
+  log.Info("chmod +x ./dotnet-install.sh")
+  cmd = exec.Command("chmod", "+x", "./dotnet-install.sh")
+  cmd.Stdout = os.Stdout
+  cmd.Stderr = os.Stderr
+  if err := cmd.Run(); err != nil {
+    log.Fatal("Failed to make dotnet core SDK executable: ", err)
+  }
+
+  // install dotnetn core sdk
+  log.Info("Installing dotnet core SDK 8.0")
+  cmd = exec.Command("./dotnet-install.sh", "--channel", "8.0")
+  cmd.Stdout = os.Stdout
+  cmd.Stderr = os.Stderr
+  if err := cmd.Run(); err != nil {
+    log.Fatal("Failed to install dotnet core SDK 8.0: ", err)
+  }
+
+  // install dotnet runtime 8.0
+  log.Info("Installing dotnet core runtime 8.0")
+  cmd = exec.Command("./dotnet-install.sh", "--runtime", "dotnet", "--version", "8.0.0")
+  cmd.Stdout = os.Stdout
+  cmd.Stderr = os.Stderr
+  if err := cmd.Run(); err != nil {
+    log.Fatal("Failed to install dotnet core runtime 8.0.0: ", err)
+  }
+
+
+  // install aspnetcore runtime 8.0
+  log.Info("Installing aspnetcore runtime 8.0")
+  cmd = exec.Command("./dotnet-install.sh", "--runtime", "aspnetcore", "--version", "8.0.0")
+  cmd.Stdout = os.Stdout
+  cmd.Stderr = os.Stderr
+  if err := cmd.Run(); err != nil {
+    log.Fatal("Failed to install aspnetcore runtime 8.0: ", err)
+  }
+
 
 	// Add dotnet core to .profile
 	log.Info("Adding dotnet core environment variables to ~/.profile...")
