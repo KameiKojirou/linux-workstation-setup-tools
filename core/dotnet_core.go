@@ -85,8 +85,8 @@ func UpdateDotnetCore() {
 func UninstallDotnetCore() {
   log.Info("Uninstalling all .NET installations…")
 
-  // 1) Purge all APT packages matching dotnet*, aspnet*, and runtime*
-  log.Info("Purging apt packages: dotnet*, aspnet*, dotnet-runtime*, dotnet-hosting*")
+  // 1) Purge all APT packages matching dotnet*, aspnet*, runtime*, hosting*
+  log.Info("Purging apt packages: dotnet-sdk-*, aspnetcore-runtime-*, dotnet-runtime-*, dotnet-hosting-*")
   purgePkgs := []string{
     "dotnet-sdk-*",
     "aspnetcore-runtime-*",
@@ -109,7 +109,11 @@ func UninstallDotnetCore() {
   // 4) Delete system-wide dotnet folders & alternatives
   log.Info("Removing system-wide dotnet directories")
   runSudo("rm", "-rf", "/usr/share/dotnet")
-  runSudo("rm", "-f", "/etc/alternatives/dotnet")
+
+  // 4a) Remove update-alternatives entry and symlink
+  log.Info("Removing update-alternatives entry and /usr/bin/dotnet symlink")
+  runSudo("update-alternatives", "--remove-all", "dotnet")
+  runSudo("rm", "-f", "/etc/alternatives/dotnet", "/usr/bin/dotnet")
 
   // 5) Remove any Snap-installed dotnet
   log.Info("Checking for snap-installed dotnet")
@@ -149,11 +153,12 @@ func UninstallDotnetCore() {
           `grep -q -E "`+pat+`" "`+path+`" && sed -i -E '/`+pat+`/d' "`+path+`"`)
         cmd.Stdout = os.Stdout
         cmd.Stderr = os.Stderr
-        _ = cmd.Run() // we don’t fatally bail on missing files or patterns
+        _ = cmd.Run() // ignore errors
       }
     }
   }
 
+  // 8) Rehash shell lookup cache
   log.Info("Rehashing shell command lookup (hash -r)…")
   exec.Command("sh", "-c", "hash -r").Run()
 
